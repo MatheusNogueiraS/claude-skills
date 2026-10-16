@@ -33,7 +33,6 @@ $skills = Get-ChildItem $origem -Directory | Where-Object { Test-Path (Join-Path
 
 if (-not $skills) {
   Write-Host "Nenhuma skill encontrada em $origem"
-  exit 0
 }
 
 foreach ($skill in $skills) {
@@ -59,5 +58,32 @@ foreach ($skill in $skills) {
   }
 }
 
+# --- Agentes -----------------------------------------------------------------
+# A pasta 'agents' inteira é ligada a ~\.claude\agents (arquivos soltos não podem
+# ser atalhados sem privilégio de administrador). Se já existir uma pasta real de
+# agentes, nada é alterado: o script avisa.
+$origemAgentes = Join-Path $PSScriptRoot "agents"
+if (Test-Path $origemAgentes) {
+  $destinoAgentes = Join-Path (Split-Path $Destino -Parent) "agents"
+
+  if (-not (Test-Path $destinoAgentes)) {
+    New-Item -ItemType Junction -Path $destinoAgentes -Target $origemAgentes | Out-Null
+    Write-Host "[ligada]   agents"
+  }
+  else {
+    $item = Get-Item $destinoAgentes -Force
+    $alvo = @($item.Target) | Select-Object -First 1
+    if ($item.LinkType -eq "Junction" -and $alvo -eq $origemAgentes) {
+      Write-Host "[ok]       agents (já ligada)"
+    }
+    elseif ($item.LinkType -eq "Junction") {
+      Write-Warning "[conflito] agents já aponta para '$alvo'. Nada foi alterado."
+    }
+    else {
+      Write-Warning "[conflito] '$destinoAgentes' já existe como pasta real. Nada foi alterado; copie os agentes à mão ou mova os seus para este repositório."
+    }
+  }
+}
+
 Write-Host ""
-Write-Host "Pronto. Abra uma nova sessão do Claude Code para carregar as skills."
+Write-Host "Pronto. Abra uma nova sessão do Claude Code para carregar as skills e os agentes."
