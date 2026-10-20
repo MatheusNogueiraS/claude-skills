@@ -7,6 +7,7 @@ Coleção de skills do Claude Code criadas por Matheus.
 | Skill | O que faz |
 |---|---|
 | [gw-pr-flow](skills/gw-pr-flow/SKILL.md) | Fluxo de alteração com branch, validação, commit, push e Pull Request em linguagem simples. |
+| [aurora-ds](skills/aurora-ds/SKILL.md) | Regras de trabalho do Projeto Aurora (design system do Bmg): tokens em JSON, componentes, Storybook, Git e PR. |
 
 ## Agentes
 
