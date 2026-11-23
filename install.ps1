@@ -58,32 +58,35 @@ foreach ($skill in $skills) {
   }
 }
 
-# --- Agentes -----------------------------------------------------------------
-# A pasta 'agents' inteira é ligada a ~\.claude\agents (arquivos soltos não podem
-# ser atalhados sem privilégio de administrador). Se já existir uma pasta real de
-# agentes, nada é alterado: o script avisa.
-$origemAgentes = Join-Path $PSScriptRoot "agents"
-if (Test-Path $origemAgentes) {
-  $destinoAgentes = Join-Path (Split-Path $Destino -Parent) "agents"
+# --- Agentes e regras gerais ---------------------------------------------------
+# Cada pasta inteira é ligada a ~\.claude\<nome> (arquivos soltos não podem ser
+# atalhados sem privilégio de administrador). Se já existir uma pasta real com
+# esse nome, nada é alterado: o script avisa.
+function Ligar-Pasta($origem, $nome) {
+  if (-not (Test-Path $origem)) { return }
+  $destinoPasta = Join-Path (Split-Path $Destino -Parent) $nome
 
-  if (-not (Test-Path $destinoAgentes)) {
-    New-Item -ItemType Junction -Path $destinoAgentes -Target $origemAgentes | Out-Null
-    Write-Host "[ligada]   agents"
+  if (-not (Test-Path $destinoPasta)) {
+    New-Item -ItemType Junction -Path $destinoPasta -Target $origem | Out-Null
+    Write-Host "[ligada]   $nome"
+    return
+  }
+
+  $item = Get-Item $destinoPasta -Force
+  $alvo = @($item.Target) | Select-Object -First 1
+  if ($item.LinkType -eq "Junction" -and $alvo -eq $origem) {
+    Write-Host "[ok]       $nome (já ligada)"
+  }
+  elseif ($item.LinkType -eq "Junction") {
+    Write-Warning "[conflito] $nome já aponta para '$alvo'. Nada foi alterado."
   }
   else {
-    $item = Get-Item $destinoAgentes -Force
-    $alvo = @($item.Target) | Select-Object -First 1
-    if ($item.LinkType -eq "Junction" -and $alvo -eq $origemAgentes) {
-      Write-Host "[ok]       agents (já ligada)"
-    }
-    elseif ($item.LinkType -eq "Junction") {
-      Write-Warning "[conflito] agents já aponta para '$alvo'. Nada foi alterado."
-    }
-    else {
-      Write-Warning "[conflito] '$destinoAgentes' já existe como pasta real. Nada foi alterado; copie os agentes à mão ou mova os seus para este repositório."
-    }
+    Write-Warning "[conflito] '$destinoPasta' já existe como pasta real. Nada foi alterado; mova os arquivos dela para este repositório e rode de novo."
   }
 }
+
+Ligar-Pasta (Join-Path $PSScriptRoot "agents") "agents"
+Ligar-Pasta (Join-Path $PSScriptRoot "global\rules") "rules"
 
 # --- CLAUDE.md geral ------------------------------------------------------------
 # Arquivo solto não pode virar atalho sem administrador, então ~\.claude\CLAUDE.md
@@ -107,4 +110,4 @@ if (Test-Path $origemGeral) {
 }
 
 Write-Host ""
-Write-Host "Pronto. Abra uma nova sessão do Claude Code para carregar as skills, os agentes e o CLAUDE.md geral."
+Write-Host "Pronto. Abra uma nova sessão do Claude Code para carregar as skills, os agentes, as regras e o CLAUDE.md geral."
