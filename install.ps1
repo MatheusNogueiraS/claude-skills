@@ -85,5 +85,26 @@ if (Test-Path $origemAgentes) {
   }
 }
 
+# --- CLAUDE.md geral ------------------------------------------------------------
+# Arquivo solto não pode virar atalho sem administrador, então ~\.claude\CLAUDE.md
+# recebe uma linha só, que importa global\CLAUDE.md deste repositório. Um CLAUDE.md
+# que já tenha outro conteúdo não é alterado: o script avisa.
+$origemGeral = Join-Path $PSScriptRoot "global\CLAUDE.md"
+if (Test-Path $origemGeral) {
+  $destinoGeral = Join-Path (Split-Path $Destino -Parent) "CLAUDE.md"
+  $importacao = "@" + ($origemGeral -replace '\\', '/')
+
+  if (-not (Test-Path $destinoGeral)) {
+    [System.IO.File]::WriteAllText($destinoGeral, "$importacao`n", (New-Object System.Text.UTF8Encoding $false))
+    Write-Host "[ligado]   CLAUDE.md geral"
+  }
+  elseif ((Get-Content $destinoGeral -Raw).Trim() -eq $importacao) {
+    Write-Host "[ok]       CLAUDE.md geral (já ligado)"
+  }
+  else {
+    Write-Warning "[conflito] '$destinoGeral' já tem outro conteúdo. Nada foi alterado; leve o conteúdo para global\CLAUDE.md e apague o arquivo para ligar."
+  }
+}
+
 Write-Host ""
-Write-Host "Pronto. Abra uma nova sessão do Claude Code para carregar as skills e os agentes."
+Write-Host "Pronto. Abra uma nova sessão do Claude Code para carregar as skills, os agentes e o CLAUDE.md geral."

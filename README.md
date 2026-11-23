@@ -27,6 +27,10 @@ O script também funciona sozinho, sem o Claude:
 .\scripts\sync-main.ps1 -RepoPath C:\caminho\do\repo -DuracaoMinutos 30   # vigia por 30 min
 ```
 
+## CLAUDE.md geral
+
+[global/CLAUDE.md](global/CLAUDE.md) guarda as diretrizes que valem em todos os projetos: como trabalhamos, os princípios de design e usabilidade e o critério do que é geral e do que é de cada projeto. O `install.ps1` liga esse arquivo a `~\.claude\CLAUDE.md`, então editar aqui e dar `git pull` atualiza todas as sessões novas.
+
 ## Instalação (recomendado)
 
 As skills e os agentes ficam **somente** neste repositório. O script liga cada skill à pasta global do Claude Code (`~\.claude\skills`) e a pasta `agents` a `~\.claude\agents`, então valem em todos os projetos e um `git pull` aqui atualiza tudo, sem cópias.
