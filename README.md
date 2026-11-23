@@ -7,6 +7,7 @@ Coleção de skills do Claude Code criadas por Matheus.
 | Skill | O que faz |
 |---|---|
 | [gw-pr-flow](skills/gw-pr-flow/SKILL.md) | Fluxo de alteração com branch, validação, commit, push e Pull Request em linguagem simples. |
+| [auditoria-usabilidade](skills/auditoria-usabilidade/SKILL.md) | Avalia uma tela, fluxo ou componente pelas heurísticas de Nielsen e pela WCAG 2.2 AA e entrega um relatório com severidade e recomendação, sem alterar nada. |
 
 ## Agentes
 
@@ -29,7 +30,19 @@ O script também funciona sozinho, sem o Claude:
 
 ## CLAUDE.md geral
 
-[global/CLAUDE.md](global/CLAUDE.md) guarda as diretrizes que valem em todos os projetos: como trabalhamos, os princípios de design e usabilidade e o critério do que é geral e do que é de cada projeto. O `install.ps1` liga esse arquivo a `~\.claude\CLAUDE.md`, então editar aqui e dar `git pull` atualiza todas as sessões novas.
+[global/CLAUDE.md](global/CLAUDE.md) guarda as diretrizes que valem em todos os projetos: como trabalhamos e o critério do que é geral e do que é de cada projeto. O `install.ps1` liga esse arquivo a `~\.claude\CLAUDE.md`, então editar aqui e dar `git pull` atualiza todas as sessões novas.
+
+## Regras gerais
+
+[global/rules](global/rules) é ligada a `~\.claude\rules`. Cada regra vale em todos os projetos, mas pode carregar só quando o Claude abre certos arquivos (lista `paths` no cabeçalho). [design-usabilidade.md](global/rules/design-usabilidade.md) traz os princípios de usabilidade e acessibilidade e carrega em arquivos de interface (`.tsx`, `.css`, stories, `DESIGN.md`...).
+
+## Modelo de projeto
+
+[templates/projeto](templates/projeto) tem um `CLAUDE.md` e um `DESIGN.md` para copiar na raiz de cada projeto novo. O `CLAUDE.md` diz onde procurar antes de criar algo e importa o `DESIGN.md`, que guarda pessoas, tarefas, tom de voz, tokens e decisões de design daquele produto.
+
+```powershell
+Copy-Item .\templates\projeto\* C:\caminho\do\projeto
+```
 
 ## Instalação (recomendado)
 
